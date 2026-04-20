@@ -29,3 +29,5 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+      - name: Check Node version
+        run: node -v
