@@ -15,19 +15,44 @@
 #       - name: Print message
 #         run: echo "bye from 2nd job"
 
-name: Uses action
+# name: Uses action
+# on: push
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code 
+#         uses: actions/checkout@v4
+#       # - name: list file
+#       #   run: ls
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 24
+#       - name: Check Node version
+#         run: node -v
+
+name: using artifacts to communicate between VMs
 on: push
 jobs:
-  test:
+  job1:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code 
-        uses: actions/checkout@v4
-      # - name: list file
-      #   run: ls
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: create a file
+        run: echo "Hello World" > file.txt
+      - name: upload on artifact
+        uses: actions/upload artifact@v4
         with:
-          node-version: 24
-      - name: Check Node version
-        run: node -v
+          name: my file
+          path: file.txt
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    steps: 
+      - name: download a file
+        uses: actions/download artifact@v4
+        with:
+          name: my-file
+
+      - name: read file.txt
+        run: cat file.txt
